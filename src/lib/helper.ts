@@ -1,29 +1,4 @@
-export function getLocalStorageItem (key: string, defaultValue = '') {
-    return window.localStorage.getItem(key) || defaultValue
-}
-
-export function setLocalStorageItem (key: string, value: string) {
-    return window.localStorage.setItem(key, value)
-}
-
-export function removeLocalStorageItem (key: string) {
-    return window.localStorage.removeItem(key)
-}
-
 export function noop () {}
-
-/**
- * to return Promise<[T, Error]>
- * @param {Promise<T>} promise
- */
-export async function to <T, E = Error> (promise: Promise<T>): Promise<[T, E]> {
-    try {
-        const ret = await promise
-        return [ret, null as unknown as E]
-    } catch (e) {
-        return [null as unknown as T, e]
-    }
-}
 
 export function partition<T> (arr: T[], fn: (arg: T) => boolean): [T[], T[]] {
     const left: T[] = []
@@ -32,4 +7,15 @@ export function partition<T> (arr: T[], fn: (arg: T) => boolean): [T[], T[]] {
         fn(item) ? left.push(item) : right.push(item)
     }
     return [left, right]
+}
+
+export function formatTraffic (num: number) {
+    const s = ['B', 'KB', 'MB', 'GB', 'TB']
+    let idx = 0
+    while (~~(num / 1024) && idx < s.length) {
+        num /= 1024
+        idx++
+    }
+
+    return `${idx === 0 ? num : num.toFixed(2)} ${s[idx]}`
 }

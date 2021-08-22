@@ -1,10 +1,10 @@
-import React, { useLayoutEffect, useEffect, useRef, useState } from 'react'
 import dayjs from 'dayjs'
-import { useI18n } from '@stores'
+import React, { useLayoutEffect, useEffect, useRef, useState } from 'react'
+
 import { Card, Header } from '@components'
-import { getLogsStreamReader } from '@lib/request'
-import { StreamReader } from '@lib/streamer'
 import { Log } from '@models/Log'
+import { useI18n, useLogsStreamReader } from '@stores'
+
 import './style.scss'
 
 export default function Logs () {
@@ -13,45 +13,43 @@ export default function Logs () {
     const [logs, setLogs] = useState<Log[]>([])
     const { translation } = useI18n()
     const { t } = translation('Logs')
+    const logsStreamReader = useLogsStreamReader()
 
     useLayoutEffect(() => {
         const ul = listRef.current
-        if (ul) {
+        if (ul != null) {
             ul.scrollTop = ul.scrollHeight
         }
     })
 
     useEffect(() => {
-        let streamReader: StreamReader<Log> | null = null
-
         function handleLog (newLogs: Log[]) {
             logsRef.current = logsRef.current.slice().concat(newLogs.map(d => ({ ...d, time: new Date() })))
             setLogs(logsRef.current)
         }
 
-        (async function () {
-            streamReader = await getLogsStreamReader()
-            logsRef.current = streamReader.buffer()
+        if (logsStreamReader != null) {
+            logsStreamReader.subscribe('data', handleLog)
+            logsRef.current = logsStreamReader.buffer()
             setLogs(logsRef.current)
-            streamReader.subscribe('data', handleLog)
-        }())
+        }
 
-        return () => streamReader?.unsubscribe('data', handleLog)
-    }, [])
+        return () => logsStreamReader?.unsubscribe('data', handleLog)
+    }, [logsStreamReader])
 
     return (
         <div className="page">
             <Header title={ t('title') } />
-            <Card className="logs-card">
+            <Card className="flex flex-col flex-1 mt-2.5 md:mt-4">
                 <ul className="logs-panel" ref={listRef}>
                     {
                         logs.map(
                             (log, index) => (
-                                <li key={index}>
-                                    <span className="logs-panel-time">{ dayjs(log.time).format('YYYY-MM-DD HH:mm:ss') }</span>
+                                <li className="leading-5 inline-block" key={index}>
+                                    <span className="mr-4 text-gray-400 text-opacity-90">{ dayjs(log.time).format('YYYY-MM-DD HH:mm:ss') }</span>
                                     <span>[{ log.type }] { log.payload }</span>
                                 </li>
-                            )
+                            ),
                         )
                     }
                 </ul>

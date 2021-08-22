@@ -1,18 +1,19 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { render } from 'react-dom'
 import { HashRouter } from 'react-router-dom'
-import { RecoilRoot } from 'recoil'
+
+import { Loading } from '@components'
 import App from '@containers/App'
-import 'windi.css'
+import 'virtual:windi.css'
 
 export default function renderApp () {
     const rootEl = document.getElementById('root')
     const AppInstance = (
-        <RecoilRoot>
-            <HashRouter>
+        <HashRouter>
+            <Suspense fallback={<Loading visible />}>
                 <App />
-            </HashRouter>
-        </RecoilRoot>
+            </Suspense>
+        </HashRouter>
     )
 
     render(AppInstance, rootEl)

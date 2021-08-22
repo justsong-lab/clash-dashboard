@@ -16,7 +16,7 @@
         line-height: 17px;
 
         &.modify-btn {
-            color: $color-primary-dark;
+            color: $color-primary;
             cursor: pointer;
         }
     }
@@ -62,14 +62,6 @@
 
         &:hover {
             color: $color-primary-darken;
-        }
-    }
-}
-
-@media (max-width: 768px) {
-    .settings-card {
-        .flex .flex.w-1\/2  {
-            width: 100%;
         }
     }
 }

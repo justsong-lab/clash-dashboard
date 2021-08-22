@@ -1,10 +1,11 @@
-import * as React from 'react'
 import classnames from 'classnames'
-import { Card, Tag, Icon } from '@components'
-import { useI18n, useRuleProviders } from '@stores'
+import * as React from 'react'
+
+import { Tag, Icon } from '@components'
 import { fromNow } from '@lib/date'
-import { RuleProvider, updateRuleProvider } from '@lib/request'
 import { useVisible } from '@lib/hook'
+import { RuleProvider } from '@lib/request'
+import { useClient, useI18n, useRuleProviders } from '@stores'
 import './style.scss'
 
 interface ProvidersProps {
@@ -14,6 +15,7 @@ interface ProvidersProps {
 export function Provider (props: ProvidersProps) {
     const { update } = useRuleProviders()
     const { translation, lang } = useI18n()
+    const client = useClient()
 
     const { provider } = props
     const { t } = translation('Rules')
@@ -22,13 +24,13 @@ export function Provider (props: ProvidersProps) {
 
     function handleUpdate () {
         show()
-        updateRuleProvider(provider.name).then(() => update()).finally(() => hide())
+        client.updateRuleProvider(provider.name).then(async () => await update()).finally(() => hide())
     }
 
     const updateClassnames = classnames('rule-provider-icon', { 'rule-provider-loading': visible })
 
     return (
-        <Card className="rule-provider">
+        <div className="rule-provider">
             <div className="rule-provider-header">
                 <div className="rule-provider-header-part">
                     <span className="rule-provider-name">{ provider.name }</span>
@@ -44,6 +46,6 @@ export function Provider (props: ProvidersProps) {
                     <Icon className={updateClassnames} type="update" size={18} onClick={handleUpdate} />
                 </div>
             </div>
-        </Card>
+        </div>
     )
 }

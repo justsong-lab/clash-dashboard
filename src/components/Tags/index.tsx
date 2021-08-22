@@ -1,8 +1,9 @@
-import React, { useState, useRef, useLayoutEffect } from 'react'
-import { useI18n } from '@stores'
-import { BaseComponentProps } from '@models'
-import { noop } from '@lib/helper'
 import classnames from 'classnames'
+import React, { useState, useRef, useLayoutEffect } from 'react'
+
+import { noop } from '@lib/helper'
+import { BaseComponentProps } from '@models'
+import { useI18n } from '@stores'
 import './style.scss'
 
 interface TagsProps extends BaseComponentProps {
@@ -36,7 +37,7 @@ export function Tags (props: TagsProps) {
 
     const tags = data
         .map(t => {
-            const tagClass = classnames({ 'tags-selected': select === t, 'can-click': canClick, error: errSet?.has(t) })
+            const tagClass = classnames({ 'tags-selected': select === t, 'cursor-pointer': canClick, error: errSet?.has(t) })
             return (
                 <li className={tagClass} key={t} onClick={() => handleClick(t)}>
                     { t }
@@ -45,13 +46,13 @@ export function Tags (props: TagsProps) {
         })
 
     return (
-        <div className={classnames('tags-container', className)} style={{ height: rowHeight }}>
+        <div className={classnames('flex items-start overflow-y-hidden', className)} style={{ height: rowHeight }}>
             <ul ref={ulRef} className={classnames('tags', { expand })}>
                 { tags }
             </ul>
             {
                 showExtend &&
-                <span className="tags-expand" onClick={toggleExtend}>{ expand ? t('collapseText') : t('expandText') }</span>
+                <span className="h-7 px-5 select-none cursor-pointer leading-7" onClick={toggleExtend}>{ expand ? t('collapseText') : t('expandText') }</span>
             }
         </div>
     )

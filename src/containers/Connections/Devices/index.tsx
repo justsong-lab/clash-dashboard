@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react'
 import classnames from 'classnames'
+import React, { useMemo } from 'react'
+
 import { BaseComponentProps } from '@models'
 import { useI18n } from '@stores'
 import './style.scss'
@@ -15,14 +16,14 @@ export function Devices (props: DevicesProps) {
     const t = useMemo(() => translation('Connections').t, [translation])
 
     const { className, style } = props
-    const classname = classnames('connections-devices', className)
+    const classname = classnames('flex flex-wrap px-1', className)
     function handleSelected (label: string) {
         props.onChange?.(label)
     }
 
     return (
         <div className={classname} style={style}>
-            <div className={classnames('connections-devices-item', { selected: props.selected === '' })} onClick={() => handleSelected('')}>
+            <div className={classnames('connections-devices-item pt-2 mb-2', { selected: props.selected === '' })} onClick={() => handleSelected('')}>
                 { t('filter.all') }
             </div>
             {
@@ -30,11 +31,11 @@ export function Devices (props: DevicesProps) {
                     device => (
                         <div
                             key={device.label}
-                            className={classnames('connections-devices-item', { selected: props.selected === device.label })}
+                            className={classnames('connections-devices-item pt-2 mb-2', { selected: props.selected === device.label })}
                             onClick={() => handleSelected(device.label)}>
                             { device.label } ({ device.number })
                         </div>
-                    )
+                    ),
                 )
             }
         </div>

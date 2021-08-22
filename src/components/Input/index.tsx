@@ -1,7 +1,8 @@
-import * as React from 'react'
-import { BaseComponentProps } from '@models/BaseProps'
-import { noop } from '@lib/helper'
 import classnames from 'classnames'
+import * as React from 'react'
+
+import { noop } from '@lib/helper'
+import { BaseComponentProps } from '@models/BaseProps'
 import './style.scss'
 
 interface InputProps extends BaseComponentProps {
@@ -26,9 +27,9 @@ export function Input (props: InputProps) {
         type = 'text',
         disabled = false,
         onChange = noop,
-        onBlur = noop
+        onBlur = noop,
     } = props
-    const classname = classnames('input', `input-align-${align}`, { 'input-inside': inside }, className)
+    const classname = classnames('input', `text-${align}`, { 'focus:shadow-none': inside }, className)
 
     return (
         <input

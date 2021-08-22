@@ -1,6 +1,6 @@
 import EventEmitter from 'eventemitter3'
+import { ResultAsync } from 'neverthrow'
 import { SetRequired } from 'type-fest'
-import { to } from '@lib/helper'
 
 export interface Config {
     url: string
@@ -21,9 +21,9 @@ export class StreamReader<T> {
             {
                 bufferLength: 0,
                 retryInterval: 5000,
-                headers: {}
+                headers: {},
             },
-            config
+            config,
         )
 
         this.config.useWebsocket
@@ -56,35 +56,38 @@ export class StreamReader<T> {
     }
 
     protected async loop () {
-        const [resp, err] = await to(fetch(
+        const result = await ResultAsync.fromPromise(fetch(
             this.config.url,
             {
                 mode: 'cors',
-                headers: this.config.token ? { Authorization: `Bearer ${this.config.token}` } : {}
-            }
-        ))
-        if (err || !resp.body) {
-            this.retry(err)
+                headers: this.config.token ? { Authorization: `Bearer ${this.config.token}` } : {},
+            },
+        ), e => e as Error)
+        if (result.isErr()) {
+            this.retry(result.error)
+            return
+        } else if (result.value.body == null) {
+            this.retry(new Error('fetch body error'))
             return
         }
 
-        const reader = resp.body.getReader()
+        const reader = result.value.body.getReader()
         const decoder = new TextDecoder()
         while (true) {
             if (this.isClose) {
                 break
             }
 
-            const [{ value }, err] = await to(reader?.read())
-            if (err) {
-                this.retry(err)
+            const result = await ResultAsync.fromPromise(reader?.read(), e => e as Error)
+            if (result.isErr()) {
+                this.retry(result.error)
                 break
             }
 
-            const lines = decoder.decode(value).trim().split('\n')
+            const lines = decoder.decode(result.value.value).trim().split('\n')
             const data = lines.map(l => JSON.parse(l))
             this.EE.emit('data', data)
-            if (this.config.bufferLength! > 0) {
+            if (this.config.bufferLength > 0) {
                 this.innerBuffer.push(...data)
                 if (this.innerBuffer.length > this.config.bufferLength) {
                     this.innerBuffer.splice(0, this.innerBuffer.length - this.config.bufferLength)
@@ -96,7 +99,7 @@ export class StreamReader<T> {
     protected retry (err: Error) {
         if (!this.isClose) {
             this.EE.emit('error', err)
-            window.setTimeout(this.loop, this.config.retryInterval)
+            window.setTimeout(() => { this.loop() }, this.config.retryInterval)
         }
     }
 

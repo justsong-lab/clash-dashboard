@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react'
+
+import { Card, Header, Icon, Checkbox } from '@components'
 import EE from '@lib/event'
 import { useRound } from '@lib/hook'
-import { Card, Header, Icon, Checkbox } from '@components'
-import { useI18n, useConfig, useProxy, useProxyProviders, useGeneral } from '@stores'
 import * as API from '@lib/request'
+import { useI18n, useConfig, useProxy, useProxyProviders, useGeneral } from '@stores'
 
 import { Proxy, Group, Provider } from './components'
 import './style.scss'
@@ -17,12 +18,12 @@ enum sortType {
 const sortMap = {
     [sortType.None]: 'sort',
     [sortType.Asc]: 'sort-ascending',
-    [sortType.Desc]: 'sort-descending'
+    [sortType.Desc]: 'sort-descending',
 }
 
 export function compareDesc (a: API.Proxy, b: API.Proxy) {
-    const lastDelayA = a.history.length ? a.history.slice(-1)[0].delay : 0
-    const lastDelayB = b.history.length ? b.history.slice(-1)[0].delay : 0
+    const lastDelayA = (a.history.length > 0) ? a.history.slice(-1)[0].delay : 0
+    const lastDelayB = (b.history.length > 0) ? b.history.slice(-1)[0].delay : 0
     return (lastDelayB || Number.MAX_SAFE_INTEGER) - (lastDelayA || Number.MAX_SAFE_INTEGER)
 }
 
@@ -35,23 +36,23 @@ function ProxyGroups () {
 
     const list = useMemo(
         () => general.mode === 'global' ? [global] : groups,
-        [general, groups, global]
+        [general, groups, global],
     )
 
     return <>
         {
             list.length !== 0 &&
-            <div className="proxies-container">
+            <div className="flex flex-col">
                 <Header title={t('groupTitle')}>
                     <Checkbox
-                        className="connections-filter"
+                        className="text-primary-600 text-sm text-shadow-primary cursor-pointer"
                         checked={config.breakConnections}
                         onChange={value => setConfig('breakConnections', value)}>
                         {t('breakConnectionsText')}
                     </Checkbox>
                 </Header>
-                <Card className="proxies-group-card">
-                    <ul className="proxies-group-list">
+                <Card className="my-2.5 md:my-4 p-0">
+                    <ul className="list-none">
                         {
                             list.map(p => (
                                 <li className="proxies-group-item" key={p.name}>
@@ -74,12 +75,12 @@ function ProxyProviders () {
     return <>
         {
             providers.length !== 0 &&
-            <div className="proxies-container">
+            <div className="flex flex-col">
                 <Header title={t('providerTitle')} />
-                <ul className="proxies-providers-list">
+                <ul className="list-none">
                     {
                         providers.map(p => (
-                            <li className="proxies-providers-item" key={p.name}>
+                            <li className="my-2.5 md:my-4" key={p.name}>
                                 <Provider provider={p} />
                             </li>
                         ))
@@ -100,16 +101,16 @@ function Proxies () {
     }
 
     const { current: sort, next } = useRound(
-        [sortType.Asc, sortType.Desc, sortType.None]
+        [sortType.Asc, sortType.Desc, sortType.None],
     )
     const sortedProxies = useMemo(() => {
         switch (sort) {
-        case sortType.Desc:
-            return proxies.slice().sort((a, b) => compareDesc(a, b))
-        case sortType.Asc:
-            return proxies.slice().sort((a, b) => -1 * compareDesc(a, b))
-        default:
-            return proxies.slice()
+            case sortType.Desc:
+                return proxies.slice().sort((a, b) => compareDesc(a, b))
+            case sortType.Asc:
+                return proxies.slice().sort((a, b) => -1 * compareDesc(a, b))
+            default:
+                return proxies.slice()
         }
     }, [sort, proxies])
     const handleSort = next
@@ -117,10 +118,10 @@ function Proxies () {
     return <>
         {
             sortedProxies.length !== 0 &&
-            <div className="proxies-container">
+            <div className="flex flex-col">
                 <Header title={t('title')}>
-                    <Icon className="proxies-action-icon" type={sortMap[sort]} onClick={handleSort} size={20} />
-                    <Icon className="proxies-action-icon" type="speed" size={20} />
+                    <Icon className="ml-3" type={sortMap[sort]} onClick={handleSort} size={20} />
+                    <Icon className="ml-3" type="speed" size={20} />
                     <span className="proxies-speed-test" onClick={handleNotitySpeedTest}>{t('speedTestText')}</span>
                 </Header>
                 <ul className="proxies-list">

@@ -6,19 +6,6 @@
     padding: 0;
     overflow: hidden;
 
-    .connections {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        flex-grow: 1;
-        flex-basis: 0;
-        overflow: auto;
-    }
-
-    .connections-body {
-        flex: 1 0 auto;
-    }
-
     .connections-th {
         $height: 30px;
 
@@ -51,7 +38,7 @@
 
         position: absolute;
         opacity: 0;
-        right: $width / -2;
+        right: math.div($width, -2);
         top: $padding;
         bottom: $padding;
         width: $width;
@@ -65,8 +52,8 @@
             content: '';
             display: block;
             position: absolute;
-            left: $width / 2;
-            transform: translateX(-2px);
+            left: math.div($width, 2);
+            transform: translateX(-1px);
             width: 2px;
             height: 100%;
             background-color: rgba($color-gray-darken, 60%);
@@ -76,16 +63,12 @@
     .connections-header {
         position: sticky;
         top: 0;
-        z-index: 9999;
+        z-index: 999;
         white-space: nowrap;
 
         &:hover .connections-resizer {
             opacity: 1;
         }
-    }
-
-    .connetions-item {
-        height: 36px;
     }
 
     .connections-block {
@@ -99,10 +82,6 @@
         text-overflow: ellipsis;
         white-space: nowrap;
 
-        &.center {
-            text-align: center;
-        }
-
         &.completed {
             background-color: darken($color-gray-light, 3%);
             color: rgba($color-primary-darken, 50%);
@@ -111,7 +90,7 @@
         &.fixed {
             position: sticky;
             left: 0;
-            z-index: 999;
+            z-index: 998;
             background-color: $color-white;
             box-shadow: inset -9px 0 8px -14px $color-black;
         }
@@ -129,10 +108,5 @@
     &.dangerous {
         color: $color-red;
         text-shadow: 0 0 6px rgba($color: $color-primary, $alpha: 0.2);
-    }
-
-    &.total {
-        flex: 1;
-        cursor: unset;
     }
 }

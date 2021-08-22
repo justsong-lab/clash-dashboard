@@ -1,5 +1,6 @@
-import React from 'react'
 import classnames from 'classnames'
+import React from 'react'
+
 import { Icon } from '@components'
 import { BaseComponentProps } from '@models'
 import './style.scss'
@@ -14,7 +15,7 @@ const iconMap = {
     success: 'check',
     info: 'info',
     warning: 'info',
-    error: 'close'
+    error: 'close',
 }
 
 export function Alert (props: AlertProps) {

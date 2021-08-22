@@ -1,31 +1,33 @@
+import { useAtom } from 'jotai'
+import { useUpdateAtom } from 'jotai/utils'
 import React, { useEffect } from 'react'
-import { useObject } from '@lib/hook'
+
 import { Modal, Input, Alert } from '@components'
-import { useI18n, useAPIInfo, useIdentity } from '@stores'
+import { useObject } from '@lib/hook'
+import { useI18n, useAPIInfo, identityAtom } from '@stores'
+import { localStorageAtom } from '@stores/request'
 import './style.scss'
 
 export default function ExternalController () {
     const { translation } = useI18n()
     const { t } = translation('Settings')
-    const { data: info, update, fetch } = useAPIInfo()
-    const { identity, set: setIdentity } = useIdentity()
+    const { hostname, port, secret } = useAPIInfo()
+    const [identity, setIdentity] = useAtom(identityAtom)
     const [value, set] = useObject({
         hostname: '',
         port: '',
-        secret: ''
+        secret: '',
     })
 
     useEffect(() => {
-        fetch()
-    }, [fetch])
+        set({ hostname, port, secret })
+    }, [hostname, port, secret, set])
 
-    useEffect(() => {
-        set({ hostname: info.hostname, port: info.port, secret: info.secret })
-    }, [info, set])
+    const setter = useUpdateAtom(localStorageAtom)
 
     function handleOk () {
         const { hostname, port, secret } = value
-        update({ hostname, port, secret })
+        setter([{ hostname, port, secret }])
     }
 
     return (
@@ -40,9 +42,9 @@ export default function ExternalController () {
                 <p>{t('externalControllerSetting.note')}</p>
             </Alert>
             <div className="flex items-center">
-                <span className="title w-14">{t('externalControllerSetting.host')}</span>
+                <span className="md:my-3 w-14 my-1 font-bold">{t('externalControllerSetting.host')}</span>
                 <Input
-                    className="form flex-1"
+                    className="md:my-3 flex-1 my-1"
                     align="left"
                     inside={true}
                     value={value.hostname}
@@ -50,9 +52,9 @@ export default function ExternalController () {
                 />
             </div>
             <div className="flex items-center">
-                <div className="title w-14">{t('externalControllerSetting.port')}</div>
+                <div className="md:my-3 w-14 my-1 font-bold">{t('externalControllerSetting.port')}</div>
                 <Input
-                    className="form flex-1"
+                    className="md:my-3 w-14 my-1 flex-1"
                     align="left"
                     inside={true}
                     value={value.port}
@@ -60,9 +62,9 @@ export default function ExternalController () {
                 />
             </div>
             <div className="flex items-center">
-                <div className="title w-14">{t('externalControllerSetting.secret')}</div>
+                <div className="md:my-3 w-14 my-1 font-bold">{t('externalControllerSetting.secret')}</div>
                 <Input
-                    className="form flex-1"
+                    className="md:my-3 w-14 my-1 flex-1"
                     align="left"
                     inside={true}
                     value={value.secret}

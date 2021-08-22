@@ -1,6 +1,7 @@
-import * as React from 'react'
-import { BaseComponentProps } from '@models/BaseProps'
 import classnames from 'classnames'
+import * as React from 'react'
+
+import { BaseComponentProps } from '@models/BaseProps'
 import './style.scss'
 
 export interface ButtonSelectOptions<T = string> {
@@ -10,7 +11,7 @@ export interface ButtonSelectOptions<T = string> {
 
 export interface ButtonSelectProps<T = string> extends BaseComponentProps {
     // options
-    options: ButtonSelectOptions<T>[]
+    options: Array<ButtonSelectOptions<T>>
 
     // active value
     value: T

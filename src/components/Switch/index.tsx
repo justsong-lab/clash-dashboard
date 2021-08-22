@@ -1,8 +1,9 @@
+import classnames from 'classnames'
 import * as React from 'react'
-import { BaseComponentProps } from '@models/BaseProps'
+
 import { Icon } from '@components'
 import { noop } from '@lib/helper'
-import classnames from 'classnames'
+import { BaseComponentProps } from '@models/BaseProps'
 import './style.scss'
 
 interface SwitchProps extends BaseComponentProps {
@@ -23,7 +24,7 @@ export function Switch (props: SwitchProps) {
 
     return (
         <div className={classname} onClick={handleClick}>
-            <Icon className="switch-icon" type="check" size={20} style={{ fontWeight: 'bold' }} />
+            <Icon className="switch-icon font-bold" type="check" size={20} />
         </div>
     )
 }
